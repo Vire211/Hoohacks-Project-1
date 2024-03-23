@@ -7,8 +7,10 @@ public class PlayerController : MonoBehaviour
     private int direction;
     private Rigidbody2D rb;
     public GameObject shield;
+    public GameObject sword;
 
     private bool blocking;
+    private bool attacking;
     private bool cooldown;
 
     // Start is called before the first frame update
@@ -23,7 +25,7 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!blocking)
+        if (!blocking && !attacking)
         {
             if (Input.GetKeyDown(KeyCode.RightArrow))
             {
@@ -47,9 +49,14 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        if (Input.GetMouseButtonDown(0) && !blocking && !cooldown)
+        if (Input.GetMouseButtonDown(0) && !blocking && !cooldown && !attacking)
         {
             StartCoroutine(block());
+        }
+
+        if (Input.GetMouseButtonDown(1) && !blocking && !cooldown && !attacking)
+        {
+            StartCoroutine(attack());
         }
     }
 
@@ -58,10 +65,23 @@ public class PlayerController : MonoBehaviour
         blocking = true;
         shield.SetActive(true);
 
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.2f);
 
         shield.SetActive(false);
         blocking = false;
+
+        StartCoroutine(cool());
+    }
+
+    IEnumerator attack()
+    {
+        attacking = true;
+        sword.SetActive(true);
+
+        yield return new WaitForSeconds(0.2f);
+
+        sword.SetActive(false);
+        attacking = false;
 
         StartCoroutine(cool());
     }
