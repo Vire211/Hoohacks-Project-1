@@ -85,11 +85,11 @@ public class spawnManagerScript : MonoBehaviour
     {
         if (player.getScore() != 0)
         {
-            spawnInterval = Mathf.Log(player.getScore(), 10) + 3;
+            spawnInterval = Mathf.Log(player.getScore(), 10) + 2;
         }
         else
         {
-            spawnInterval = 3.0f;
+            spawnInterval = 2.0f;
         }
 
         if (spawnInterval < 0.6)

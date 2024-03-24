@@ -13,11 +13,20 @@ public class basicEnemy : MonoBehaviour
     public bool normal;
 
     public GameObject debris;
+    private AudioSource audio;
+    public AudioClip flying;
 
     // Start is called before the first frame update
     void Start()
     {
+        audio = GetComponent<AudioSource>();
         rb = GetComponent<Rigidbody2D>();
+
+        if (flying)
+        {
+            audio.clip = flying;
+            audio.Play();
+        }
     }
 
     // Update is called once per frame

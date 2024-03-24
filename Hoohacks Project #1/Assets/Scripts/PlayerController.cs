@@ -27,6 +27,17 @@ public class PlayerController : MonoBehaviour
     public TextMeshProUGUI healthText;
     public TextMeshProUGUI countText;
 
+    public TextMeshProUGUI scoreT;
+
+    public GameObject camera;
+
+    // Reference to sound objects
+    private AudioSource audioData;
+    public AudioClip hurt;
+    public AudioClip attackSound;
+    public AudioClip bash;
+    public AudioClip deflect;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -42,6 +53,8 @@ public class PlayerController : MonoBehaviour
         gameOverPanel.SetActive(false);
         instructionsPanel.SetActive(true);
 
+        audioData = GetComponent<AudioSource>();
+
         rb = GetComponent<Rigidbody2D>();
     }
 
@@ -52,6 +65,7 @@ public class PlayerController : MonoBehaviour
         {
             scoreText.text = "Score: " + score;
             healthText.text = "Health: " + health;
+            scoreT.text = "Your Score was " + score;
 
             if (!dead)
             {
@@ -97,6 +111,9 @@ public class PlayerController : MonoBehaviour
         blocking = true;
         shield.SetActive(true);
 
+        audioData.clip = bash;
+        audioData.Play();
+
         yield return new WaitForSeconds(0.2f);
 
         shield.SetActive(false);
@@ -109,6 +126,8 @@ public class PlayerController : MonoBehaviour
     {
         attacking = true;
         sword.SetActive(true);
+        audioData.clip = attackSound;
+        audioData.Play();
 
         yield return new WaitForSeconds(0.2f);
 
@@ -149,11 +168,31 @@ public class PlayerController : MonoBehaviour
     public void incermentScore()
     {
         score += 1;
+        audioData.clip = deflect;
+        audioData.Play();
     }
 
     public void decrementHealth()
     {
         health -= 1;
+
+        audioData.clip = hurt;
+        audioData.Play();
+
+        StartCoroutine(hit());
+    }
+
+    IEnumerator hit()
+    {
+        camera.transform.position = new Vector3(camera.transform.position.x + 1, camera.transform.position.y, camera.transform.position.z);
+
+        yield return new WaitForSeconds(0.05f);
+
+        camera.transform.position = new Vector3(camera.transform.position.x - 2, camera.transform.position.y, camera.transform.position.z);
+
+        yield return new WaitForSeconds(0.05f);
+
+        camera.transform.position = new Vector3(camera.transform.position.x + 1, camera.transform.position.y, camera.transform.position.z);
     }
 
     public void setDead(bool d)

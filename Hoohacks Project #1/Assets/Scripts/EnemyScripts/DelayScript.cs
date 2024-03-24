@@ -15,12 +15,22 @@ public class DelayScript : MonoBehaviour
     private bool waiting;
     private bool waited;
 
+    private AudioSource audio;
+    public AudioClip flying;
+
+    private AudioSource audi;
+
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         waiting = false;
         waited = false;
+
+        audio = GetComponent<AudioSource>();
+        audi = GameObject.Find("EnemySound").GetComponent<AudioSource>();
+        audio.clip = flying;
+        audio.Play();
     }
 
     // Update is called once per frame
