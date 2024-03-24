@@ -7,6 +7,8 @@ public class DelayScript : MonoBehaviour
     public int x;
     public int y;
 
+    public GameObject debris;
+
     private Rigidbody2D rb;
 
     public float speed;
@@ -37,6 +39,10 @@ public class DelayScript : MonoBehaviour
         {
             StartCoroutine(wait());
         }
+
+        float rotAmount = 480f * Time.deltaTime;
+        float curRot = transform.localRotation.eulerAngles.z;
+        transform.localRotation = Quaternion.Euler(new Vector3(0, 0, curRot + rotAmount));
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -46,6 +52,7 @@ public class DelayScript : MonoBehaviour
         if (layer == 7)
         {
             GameObject.Find("Player").GetComponent<PlayerController>().incermentScore();
+            shootDebris();
             Destroy(this.gameObject);
         }
     }
@@ -58,5 +65,39 @@ public class DelayScript : MonoBehaviour
 
         waited = true;
         waiting = false;
+    }
+
+    private void shootDebris()
+    {
+        int type = Random.Range(0, 2);
+
+        if (type == 0)
+        {
+            GameObject newDebris = (GameObject)Instantiate(debris, transform.position, Quaternion.identity);
+            newDebris.GetComponent<Rigidbody2D>().velocity = new Vector3(1, 1, 0) * 5;
+
+            newDebris = (GameObject)Instantiate(debris, transform.position, Quaternion.identity);
+            newDebris.GetComponent<Rigidbody2D>().velocity = new Vector3(1, -1, 0) * 5;
+
+            newDebris = (GameObject)Instantiate(debris, transform.position, Quaternion.identity);
+            newDebris.GetComponent<Rigidbody2D>().velocity = new Vector3(-1, 1, 0) * 5;
+
+            newDebris = (GameObject)Instantiate(debris, transform.position, Quaternion.identity);
+            newDebris.GetComponent<Rigidbody2D>().velocity = new Vector3(-1, -1, 0) * 5;
+        }
+        else
+        {
+            GameObject newDebris = (GameObject)Instantiate(debris, transform.position, Quaternion.identity);
+            newDebris.GetComponent<Rigidbody2D>().velocity = new Vector3(1, 0, 0) * 5;
+
+            newDebris = (GameObject)Instantiate(debris, transform.position, Quaternion.identity);
+            newDebris.GetComponent<Rigidbody2D>().velocity = new Vector3(0, -1, 0) * 5;
+
+            newDebris = (GameObject)Instantiate(debris, transform.position, Quaternion.identity);
+            newDebris.GetComponent<Rigidbody2D>().velocity = new Vector3(-1, 0, 0) * 5;
+
+            newDebris = (GameObject)Instantiate(debris, transform.position, Quaternion.identity);
+            newDebris.GetComponent<Rigidbody2D>().velocity = new Vector3(0, 1, 0) * 5;
+        }
     }
 }

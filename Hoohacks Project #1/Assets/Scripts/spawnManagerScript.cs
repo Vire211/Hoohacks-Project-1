@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class spawnManagerScript : MonoBehaviour
 {
-    private int current;
     private float spawnInterval;
     private bool canSpawn;
 
@@ -22,7 +21,6 @@ public class spawnManagerScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        current = 0;
         spawnInterval = 3.0f;
         canSpawn = true;
         size = 1;
@@ -33,7 +31,7 @@ public class spawnManagerScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!player.getDead())
+        if (!player.getDead() && player.start)
         {
             calculateInterval();
 

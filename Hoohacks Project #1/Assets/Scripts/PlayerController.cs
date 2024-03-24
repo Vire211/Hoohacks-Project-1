@@ -6,17 +6,18 @@ using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
-    private int direction;
     private Rigidbody2D rb;
     public GameObject shield;
     public GameObject sword;
 
     public GameObject gameOverPanel;
+    public GameObject instructionsPanel;
 
     private int health;
     private bool dead;
 
     private int score;
+    public bool start;
 
     private bool blocking;
     private bool attacking;
@@ -24,19 +25,22 @@ public class PlayerController : MonoBehaviour
 
     public TextMeshProUGUI scoreText;
     public TextMeshProUGUI healthText;
+    public TextMeshProUGUI countText;
 
     // Start is called before the first frame update
     void Start()
     {
-        direction = 0;
         blocking = false;
         cooldown = false;
         health = 3;
         dead = false;
 
+        start = false;
+
         score = 0;
 
         gameOverPanel.SetActive(false);
+        instructionsPanel.SetActive(true);
 
         rb = GetComponent<Rigidbody2D>();
     }
@@ -44,48 +48,47 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        scoreText.text = "Score: " + score;
-        healthText.text = "Health: " + health;
-
-        if (!dead)
+        if (start)
         {
-            if (!blocking && !attacking)
-            {
-                if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown("d"))
-                {
-                    direction = 0;
-                    transform.rotation = Quaternion.Euler(0, 0, -90);
-                }
-                else if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown("a"))
-                {
-                    direction = 2;
-                    transform.rotation = Quaternion.Euler(0, 0, 90);
-                }
-                else if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown("w"))
-                {
-                    direction = 1;
-                    transform.rotation = Quaternion.Euler(0, 0, 0);
-                }
-                else if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown("s"))
-                {
-                    direction = 3;
-                    transform.rotation = Quaternion.Euler(0, 0, 180);
-                }
-            }
+            scoreText.text = "Score: " + score;
+            healthText.text = "Health: " + health;
 
-            if (Input.GetMouseButtonDown(0) && !blocking && !cooldown && !attacking)
+            if (!dead)
             {
-                StartCoroutine(block());
-            }
+                if (!blocking && !attacking)
+                {
+                    if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown("d"))
+                    {
+                        transform.rotation = Quaternion.Euler(0, 0, -90);
+                    }
+                    else if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown("a"))
+                    {
+                        transform.rotation = Quaternion.Euler(0, 0, 90);
+                    }
+                    else if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown("w"))
+                    {
+                        transform.rotation = Quaternion.Euler(0, 0, 0);
+                    }
+                    else if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown("s"))
+                    {
+                        transform.rotation = Quaternion.Euler(0, 0, 180);
+                    }
+                }
 
-            if (Input.GetMouseButtonDown(1) && !blocking && !cooldown && !attacking)
-            {
-                StartCoroutine(attack());
+                if (Input.GetMouseButtonDown(1) && !blocking && !cooldown && !attacking)
+                {
+                    StartCoroutine(block());
+                }
+
+                if (Input.GetMouseButtonDown(0) && !blocking && !cooldown && !attacking)
+                {
+                    StartCoroutine(attack());
+                }
             }
-        }
-        else
-        {
-            gameOverPanel.SetActive(true);
+            else
+            {
+                gameOverPanel.SetActive(true);
+            }
         }
     }
 
@@ -124,6 +127,25 @@ public class PlayerController : MonoBehaviour
         cooldown = false;
     }
 
+    IEnumerator countdown()
+    {
+        countText.text = "3";
+        instructionsPanel.SetActive(false);
+
+        yield return new WaitForSeconds(1.0f);
+
+        countText.text = "2";
+
+        yield return new WaitForSeconds(1.0f);
+
+        countText.text = "1";
+
+        yield return new WaitForSeconds(1.0f);
+
+        countText.text = "";
+        start = true;
+    }
+
     public void incermentScore()
     {
         score += 1;
@@ -157,6 +179,11 @@ public class PlayerController : MonoBehaviour
     public void retry()
     {
         SceneManager.LoadScene("Game");
+    }
+
+    public void startGame()
+    {
+        StartCoroutine(countdown());
     }
 
     public void goToMenu()
